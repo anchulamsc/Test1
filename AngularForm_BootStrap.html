@@ -33,9 +33,9 @@
         <div class="form-group">
             <label for="gender" class="col-sm-3 control-label">Gender</label>
             <div class="col-sm-2">
-                <select id="gender" class="form-control" ng-model="student.gender">
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
+                <select id="gender" class="form-control" ng-model="data.gendersData">
+                    <option ng-repeat="gender in data.gendersData" value={{gender.gender_name}}>{{gender.gender_web_name}}</option>
+                    
                 </select>
             </div>
             <div class="col-sm-7"></div>
@@ -74,7 +74,7 @@
         var studentApp = angular.module('studentApp', []);
 
         //2. create controller
-        studentApp.controller("studentController", function ($scope, $http) {
+        studentApp.controller("studentController", function ($scope, $http,$log) {
   
             //3. attach originalStudent model object
             $scope.originalStudent = {
@@ -87,6 +87,35 @@
                 physics: true,
                 chemistry: true
             };
+			
+			
+			
+			var onSuccess = function (data, status, headers, config) {
+				alert("test");
+                $scope.data = data;
+				$log.info(data);
+            };
+
+            var onError = function (data, status, headers, config) {
+                $scope.error = status;
+				$log.info(status);
+            }
+        
+           var getReq = {
+                    method: 'GET',
+                    url: 'http://www.lifeofengineers.com/JanaSenani/rest/datadisplay/listvvtdata'
+                };
+            
+            $http(getReq).success($scope.data).error(onError);
+
+            var postReq = {
+                    method: 'POST',
+                    url: '/demo/submitData',
+                    data: { myData: 'test data' }
+                };
+
+            $http(postReq).success(onSuccess).error(onError);
+			
 
             //4. copy originalStudent to student. student will be bind to a form 
             $scope.student = angular.copy($scope.originalStudent);
