@@ -1,27 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.16/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
 </head>
 <body ng-app="myApp">
 <h1>AngularJS $http Demo: </h1>
     <div ng-controller="myController">
-            Response Data: {{data.gendersData}} <br />
+            <!--
+			Response Data: {{data.gendersData}} <br />
 			<ol>
 			  <li ng-repeat = "gender in data.gendersData">
 				 {{ 'gender name: ' + gender.gender_name + ', gender web name: ' + gender.gender_web_name}}
 			  </li>
 		   </ol>
+		   Gender
 		   <select id="gender" ng-model="data.gendersData">
                     <option ng-repeat="gender in data.gendersData" value={{gender.gender_name}}>{{gender.gender_web_name}}</option>
                     
                 </select>
+				
+				<br/>
 			Error: {{error}}
+			-->
+			
+			<form ng-submit="submitStudnetForm()" >
+            <label for="firstName" >First Name: </label><br />
+            <input type="text" id="firstName" ng-model="student.firstName" /> <br />
+
+            <label for="lastName">Last Name</label><br />
+                <input type="text" id="lastName" ng-model="student.lastName" /> <br />
+            <label for="dob" >DoB</label><br />
+                <input type="date" id="dob" ng-model="student.DoB" /> <br /><br />
+
+            <label for="gender" >Gender</label> <br />
+				
+				
+                <select id="gender" name="data" class="form-control" ng-model="data.gendersData" ng-change="callOnChange()" >
+                    <option ng-repeat="gender in data.gendersData" value={{gender.gender_name}}>{{gender.gender_web_name}}</option>
+                  
+                </select>
+				<br /> <br />
+                <span>Training Type:</span><br />
+                    <label><input value="online" type="radio" name="training" ng-model="student.trainingType" />Online</label><br />
+                    <label><input value="onsite" type="radio" name="training" ng-model="student.trainingType" />OnSite</label> <br /><br />
+                <span>Subjects</span><br />
+                    <label><input type="checkbox" ng-model="student.maths" />Maths</label> <br />
+                    <label><input type="checkbox" ng-model="student.physics" />Physics</label> <br />
+                    <label><input type="checkbox"  ng-model="student.chemistry" />Chemistry</label><br /><br />
+       
+        <input type="submit" value="Submit" /> 
+        <input type="reset" ng-click="resetForm()" value="Reset" /> <br />
+		@* Note: This form will not be submitted in demo. *@
+    </form>
+			
     </div>
     <script>
        var myApp = angular.module('myApp', []);
     
         myApp.controller("myController", function ($scope, $http,$log) {
+		
+			//3. attach originalStudent model object
+            $scope.originalStudent = {
+                firstName: 'James',
+                lastName: 'Bond',
+                DoB: new Date('01/31/1980'),
+                gender: 'male',
+                trainingType: 'online',
+                maths: false,
+                physics: true,
+                chemistry: true
+            };
+			
+			 $scope.callOnChange=function() {
+				alert('onchange'+gendersdata);
+
+			  }
        
             var onSuccess = function (data, status, headers, config) {
                 $scope.data = data;
@@ -46,6 +99,21 @@
                 };
 
             $http(postReq).success(onSuccess).error(onError);
+			
+			 //4. copy originalStudent to student. student will be bind to a form 
+            $scope.student = angular.copy($scope.originalStudent);
+			
+			
+            //5. create submitStudentForm() function. This will be called when user submits the form
+            $scope.submitStudnetForm = function () {
+
+                // send $http request to save student
+            };
+
+            //6. create resetForm() function. This will be called on Reset button click.  
+            $scope.resetForm = function () {
+                $scope.student = angular.copy($scope.OriginalStudent);
+            };
          
         });
     </script>
