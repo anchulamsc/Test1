@@ -32,14 +32,62 @@
             <label for="dob" >DoB</label><br />
                 <input type="date" id="dob" ng-model="student.DoB" /> <br /><br />
 
-            <label for="gender" >Gender</label> <br />
 				
-				
-                <select id="gender" name="data" class="form-control" ng-model="data.gendersData" ng-change="callOnChange()" >
-                    <option ng-repeat="gender in data.gendersData" value={{gender.gender_name}}>{{gender.gender_web_name}}</option>
-                  
-                </select>
+				 <label for="states" >States</label> <br />
+				 <select id="states" class="form-control" name="states" 
+                                ng-model="memberData.state"
+                                
+                                ng-options="state.state_web_name  for state in vvtData.statesData"></select>
 				<br /> <br />
+				
+				<label for="districts" >Districts</label> <br />
+				 <select id="districts" class="form-control" name="districts" 
+                                ng-model="memberData.district"
+                                
+                                ng-options="district.district_web_name  for district in memberData.state.districtsInfos"></select>
+				<br /> <br />
+				
+				<label for="mandals" >Mandals</label> <br />
+				 <select id="mandals" class="form-control" name="mandals"  ng-model="memberData.mandal"
+
+                                ng-options="mandal.mandal_web_name  for mandal in memberData.district.mandalsInfos"></select>
+				<br /> <br />
+				
+            <label for="gender" >Gender</label> <br />
+			
+			<select id="gender" class="form-control" name="gender" required
+                                ng-model="memberData.gender"
+                                
+                                ng-options="gender.gender_web_name  for gender in vvtData.gendersData"></select>
+			
+				<br /> <br />
+				
+			<label for="maritalstatus" >Marital Status</label> <br />
+			
+			<select id="maritalstatus" class="form-control" name="maritalstatus" required
+                                ng-model="memberData.maritalstatus"
+                                
+                                ng-options="maritalstatus.marital_status_web_name  for maritalstatus in vvtData.maritalStatusesData"></select>
+				<br /> <br />
+				
+				<label for="qualification" >Qualification</label> <br />
+			
+			<select id="qualification" class="form-control" name="qualification" required
+                                ng-model="memberData.qualification"
+                                
+                                ng-options="qualification.qualification_web_name  for qualification in vvtData.qualificationsData"></select>
+				
+				<br /> <br />
+				
+				<label for="profession" >Profession</label> <br />
+			
+			<select id="profession" class="form-control" name="profession" required
+                                ng-model="memberData.profession"
+                                
+                                ng-options="profession.profession_web_name  for profession in vvtData.professionalsData"></select>
+				
+				<br /> <br />
+				
                 <span>Training Type:</span><br />
                     <label><input value="online" type="radio" name="training" ng-model="student.trainingType" />Online</label><br />
                     <label><input value="onsite" type="radio" name="training" ng-model="student.trainingType" />OnSite</label> <br /><br />
@@ -71,16 +119,20 @@
                 chemistry: true
             };
 			
+			$scope.memberData = {
+				state : {},
+				gender : {}			
+			};
+			
 			 $scope.callOnChange=function() {
 				alert('onchange'+gendersdata);
-
 			  }
        
             var onSuccess = function (data, status, headers, config) {
-                $scope.data = data;
+                $scope.vvtData = data;
+				$scope.memberData.gender = data.gendersData[0];
 				$log.info(data);
             };
-
             var onError = function (data, status, headers, config) {
                 $scope.error = status;
             }
@@ -91,13 +143,11 @@
                 };
             
             $http(getReq).success(onSuccess).error(onError);
-
             var postReq = {
                     method: 'POST',
                     url: '/demo/submitData',
                     data: { myData: 'test data' }
                 };
-
             $http(postReq).success(onSuccess).error(onError);
 			
 			 //4. copy originalStudent to student. student will be bind to a form 
@@ -106,10 +156,8 @@
 			
             //5. create submitStudentForm() function. This will be called when user submits the form
             $scope.submitStudnetForm = function () {
-
                 // send $http request to save student
             };
-
             //6. create resetForm() function. This will be called on Reset button click.  
             $scope.resetForm = function () {
                 $scope.student = angular.copy($scope.OriginalStudent);
@@ -122,7 +170,6 @@
 </html>
 
 <!--
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -134,19 +181,15 @@
     <button ng-click="DisplayPrompt()">Display Prompt</button>
     <script>
         var myApp = angular.module('myApp2', []);
-
         myApp.controller("myController2", function ($scope, $window) {
-
             $scope.DisplayAlert = function (message) {
                 $window.alert(message);
             }
-
             $scope.DisplayPrompt = function () {
                 var name = $window.prompt('Enter Your Name');
                 
                 $window.alert('Hello ' + name);
             }
-
         });
     </script>
 </body>
