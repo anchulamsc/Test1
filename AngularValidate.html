@@ -48,6 +48,22 @@
 			<input type="email" name="email" class="form-control" ng-model="user.email">
 			<p ng-show="userForm.email.$invalid && !userForm.email.$pristine" class="help-block">Enter a valid email.</p>
 		</div>
+		
+		<div class="form-group" ng-class="{ 'has-error' : userForm.password.$invalid && !userForm.password.$pristine }">
+			<label>Password</label>
+			<input type="password" name="password" class="form-control" ng-model="user.password" required>
+			<p ng-show="userForm.password.$invalid && !userForm.password.$pristine" class="help-block">Password is Required.</p>
+		</div>
+		
+		<div class="form-group" ng-class="{ 'has-error' : userForm.password.$invalid && !userForm.password.$pristine }">
+			<label>Confirm Password</label>
+			<input type="password" name="confirm_password" class="form-control" ng-model="user.confirm_password" required password-verify="user.password">
+			<p ng-show="userForm.confirm_password.$error.passwordVerify " class="help-block">Passwords are not Matched.</p>
+		</div>
+		
+		
+		
+		 
 
         
         <!-- SUBMIT BUTTON -->
@@ -63,6 +79,36 @@
 // create angular app
 var validationApp = angular.module('validationApp', []);
 
+validationApp.directive('passwordVerify', function() {
+    return {
+        require: 'ngModel',
+        link: function (scope, elem, attrs, model) {
+            if (!attrs.passwordVerify) {
+                console.error('passwordVerify expects a model as an argument!');
+                return;
+            }
+            scope.$watch(attrs.passwordVerify, function (value) {
+                // Only compare values if the second ctrl has a value.
+                if (model.$viewValue !== undefined && model.$viewValue !== '') {
+                    model.$setValidity('passwordVerify', value === model.$viewValue);
+                }
+            });
+            model.$parsers.push(function (value) {
+                // Mute the nxEqual error if the second ctrl is empty.
+                if (value === undefined || value === '') {
+                    model.$setValidity('passwordVerify', true);
+                    return value;
+                }
+                var isValid = value === scope.$eval(attrs.passwordVerify);
+                model.$setValidity('passwordVerify', isValid);
+                return isValid ? value : undefined;
+            });
+        }
+    };
+});
+
+
+
 // create angular controller
 validationApp.controller('mainController', function($scope) {
 
@@ -72,7 +118,9 @@ validationApp.controller('mainController', function($scope) {
     // check to make sure the form is completely valid
     if (isValid) {
       alert('our form is amazing');
-    }
+    }else{
+		alert('our form is not valid');
+	}
 
   };
 
