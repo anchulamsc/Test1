@@ -42,7 +42,7 @@
 				<br /> <br />
 				
 				<label for="districts" >Districts</label> <br />
-				 <select id="districts" class="form-control" name="districts"  ng-change="updateMandals(memberData.district.district_code)"
+				 <select id="districts" class="form-control" name="districts"  ng-change="updateMandals(memberData.state.state_code,memberData.district.district_code)"
                                 ng-model="memberData.district"
                                 
                                 ng-options="district.district_web_name  for district in memberData.state.districtsInfos"></select>
@@ -163,11 +163,11 @@
 			 //4. copy originalStudent to student. student will be bind to a form 
             $scope.memberData = angular.copy($scope.originalmemberData);
 			
-			$scope.updateMandals =function(district_code){
+			$scope.updateMandals =function(state_code,district_code){
 					if(district_code != undefined){					
 						$http({
 							method: 'GET',
-							url: 'http://www.lifeofengineers.com/JanaSenani/rest/datadisplay/listvvtdata/mandals/'+district_code                                        
+							url: 'http://www.lifeofengineers.com/JanaSenani/rest/datadisplay/listvvtdata/mandals/'+state_code+'/'+district_code                                        
 							}).success(function(data, status, headers, config) {
 								$scope.vvtData.mandalsInfos=data;
 								//$log.info(data);
