@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script data-require="angular.js@*" data-semver="1.4.0-beta.6" src="https://code.angularjs.org/1.4.0-beta.6/angular.js"></script>
+ 
+</head>
+
+<body ng-app="app">
+  <div ng-controller="LanguageController">
+    <!--<h1>{{ message }}</h1>-->
+    <select name="languageList" ng-model="languageList" ng-options="language as language.label for language in languages"></select>
+    <h2>Selected Language: {{languageList.label}}</h2>
+  </div>
+</body>
+
+ <script>
+ var app = angular.module('app', []);
+
+app.controller('LanguageController', ['$scope', function($scope) {
+    //$scope.message = "Please choose a language"
+    // language options
+    $scope.languages = [{
+      value: 'eng',
+      label: 'English'
+    }, {
+      value: 'ger',
+      label: 'German'
+    }, {
+      value: 'frc',
+      label: 'French (Canada)'
+    }, {
+      value: 'frf',
+      label: 'French (France)'
+    }, {
+      value: 'ara',
+      label: 'Arabic'
+    }];
+}]);
+
+
+ </script>
+
+</html>

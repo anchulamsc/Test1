@@ -1,0 +1,183 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- CSS ===================== -->
+    <!-- load bootstrap -->
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"> 
+    <style>
+        body    { padding-top:30px; }
+    </style>
+    
+    <!-- JS ===================== -->
+    <!-- load angular -->
+    <script src="http://code.angularjs.org/1.2.6/angular.js"></script> 
+    //<script src="app.js"></script>
+</head>
+
+<!-- apply angular app and controller to our body -->
+<body ng-app="validationApp" ng-controller="mainController">
+<div class="container">
+<div class="col-sm-8 col-sm-offset-2">
+    
+    <!-- PAGE HEADER -->
+    <div class="page-header"><h1>AngularJS Form Validation</h1></div>
+   
+    <!-- FORM -->
+    <!-- pass in the variable if our form is valid or invalid -->
+    <form name="userForm" ng-submit="submitForm(userForm.$valid)" novalidate> <!-- novalidate prevents HTML5 validation since we will be validating ourselves -->
+
+       <!-- NAME -->
+		<div class="form-group" ng-class="{ 'has-error' : userForm.name.$invalid && !userForm.name.$pristine }">
+			<label>Name</label>
+			<input type="text" name="name" class="form-control" ng-model="user.name" required>
+			<p ng-show="userForm.name.$invalid && !userForm.name.$pristine" class="help-block">You name is required.</p>
+		</div>
+
+		<!-- USERNAME -->
+		<div class="form-group" ng-class="{ 'has-error' : userForm.username.$invalid && !userForm.username.$pristine }">
+			<label>Username</label>
+			<input type="text" name="username" class="form-control" ng-model="user.username" ng-minlength="3" ng-maxlength="8">
+			<p ng-show="userForm.username.$error.minlength" class="help-block">Username is too short.</p>
+			<p ng-show="userForm.username.$error.maxlength" class="help-block">Username is too long.</p>
+		</div>
+			
+		<!-- EMAIL -->
+		<div class="form-group" ng-class="{ 'has-error' : userForm.email.$invalid && !userForm.email.$pristine }">
+			<label>Email</label>
+			<input type="email" name="email" class="form-control" ng-model="user.email">
+			<p ng-show="userForm.email.$invalid && !userForm.email.$pristine" class="help-block">Enter a valid email.</p>
+		</div>
+		
+		<div class="form-group" ng-class="{ 'has-error' : userForm.password.$invalid && !userForm.password.$pristine }">
+			<label>Password</label>
+			<input type="password" name="password" class="form-control" ng-model="user.password" required>
+			<p ng-show="userForm.password.$invalid && !userForm.password.$pristine" class="help-block">Password is Required.</p>
+		</div>
+		
+		<div class="form-group" ng-class="{ 'has-error' : userForm.password.$invalid && !userForm.password.$pristine }">
+			<label>Confirm Password</label>
+			<input type="password" name="confirm_password" class="form-control" ng-model="user.confirm_password" required password-verify="user.password">
+			<p ng-show="userForm.confirm_password.$error.passwordVerify " class="help-block">Passwords are not Matched.</p>
+		</div>
+		
+		
+		
+		 
+
+        
+        <!-- SUBMIT BUTTON -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+        
+    </form>
+
+</div><!-- col-sm-8 -->
+</div><!-- /container -->
+<script>
+
+// app.js
+// create angular app
+var validationApp = angular.module('validationApp', []);
+
+validationApp.directive('passwordVerify', function() {
+    return {
+        require: 'ngModel',
+        link: function (scope, elem, attrs, model) {
+            if (!attrs.passwordVerify) {
+                console.error('passwordVerify expects a model as an argument!');
+                return;
+            }
+            scope.$watch(attrs.passwordVerify, function (value) {
+                // Only compare values if the second ctrl has a value.
+                if (model.$viewValue !== undefined && model.$viewValue !== '') {
+                    model.$setValidity('passwordVerify', value === model.$viewValue);
+                }
+            });
+            model.$parsers.push(function (value) {
+                // Mute the nxEqual error if the second ctrl is empty.
+                if (value === undefined || value === '') {
+                    model.$setValidity('passwordVerify', true);
+                    return value;
+                }
+                var isValid = value === scope.$eval(attrs.passwordVerify);
+                model.$setValidity('passwordVerify', isValid);
+                return isValid ? value : undefined;
+            });
+        }
+    };
+});
+
+
+
+// create angular controller
+validationApp.controller('mainController', function($scope) {
+
+  // function to submit the form after all validation has occurred            
+  $scope.submitForm = function(isValid) {
+
+    // check to make sure the form is completely valid
+    if (isValid) {
+      alert('our form is amazing');
+    }else{
+		alert('our form is not valid');
+	}
+
+  };
+
+});
+</script>
+</body>
+</html>
+
+
+
+<!--
+
+
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>  
+<body>
+
+<h2>Validation Example</h2>
+
+<form ng-app="myApp" ng-controller="validateCtrl" 
+name="myForm" novalidate>
+
+<p>Username:<br>
+<input type="text" name="user" ng-model="user" required><br>
+<span style="color:red" ng-show="myForm.user.$dirty && myForm.user.$invalid">
+<span ng-show="myForm.user.$error.required">Username is required.</span>
+</span>
+</p>
+
+<p>Email:<br>
+<input type="email" name="email" ng-model="email" required><br>
+<span style="color:red" ng-show="myForm.email.$dirty && myForm.email.$invalid">
+<span ng-show="myForm.email.$error.required">Email is required.</span>
+<span ng-show="myForm.email.$error.email">Invalid email address.</span>
+</span>
+</p>
+
+<p>
+<input type="submit"
+ng-disabled="myForm.user.$dirty && myForm.user.$invalid ||  
+myForm.email.$dirty && myForm.email.$invalid">
+</p>
+
+</form>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('validateCtrl', function($scope) {
+    $scope.user = 'John Doe';
+    $scope.email = 'john.doe@gmail.com';
+});
+</script>
+
+</body>
+</html>
+
+
+
+-->
